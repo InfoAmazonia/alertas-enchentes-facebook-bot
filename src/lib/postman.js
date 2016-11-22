@@ -56,10 +56,10 @@ function processQuickReply(recipientId, quickReply) {
       sendTextMessage(recipientId, "Rio Madeira");
       break;
     case 'HELP_PAYLOAD':
-      sendTextMessage(senderID, "HELP TEXT");
+      sendTextMessage(recipientId, "HELP TEXT");
       break;
     default:
-      sendQuickReply(senderID, "Olá, como posso ajudá-lo?");
+      sendQuickReply(recipientId, "Olá, como posso ajudá-lo?");
       break;
   }
   sendTypingOff(recipientId);
@@ -142,11 +142,9 @@ function callSendAPI(messageData) {
       var messageId = body.message_id;
 
       if (messageId) {
-        console.log("Successfully sent message with id %s to recipient %s",
-          messageId, recipientId);
+        console.log("Successfully sent message with id %s to recipient %s", messageId, recipientId);
       } else {
-      console.log("Successfully called Send API for recipient %s",
-        recipientId);
+      console.log("Successfully called Send API for recipient %s", recipientId);
       }
     } else {
       console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
