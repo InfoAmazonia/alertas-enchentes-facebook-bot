@@ -2,7 +2,8 @@
 
 const
   request = require('request'),
-  config = require('./../config/config');
+  config = require('./../config/config'),
+  resource = require('./resource');
 
 exports.receivedMessage = function(event) {
   var
@@ -50,10 +51,14 @@ function processQuickReply(recipientId, quickReply) {
   var payload = quickReply.payload.split(";");
   switch (payload[0]) {
     case 'RIOACRE_PAYLOAD':
-      sendTextMessage(recipientId, "Rio Acre:");
+      resource.getRiverData('13600002', function(river) {
+        sendTextMessage(recipientId, getRiverText(river));
+      });
       break;
     case 'RIOMADEIRA_PAYLOAD':
-      sendTextMessage(recipientId, "Rio Madeira");
+      resource.getRiverData('15400000', function(river) {
+        sendTextMessage(recipientId, getRiverText(river));
+      });
       break;
     case 'HELP_PAYLOAD':
       sendTextMessage(recipientId, "HELP TEXT");
@@ -150,4 +155,9 @@ function callSendAPI(messageData) {
       console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
     }
   });
+}
+
+function getRiverText(river) {
+  var measured = river.data[0].measured;
+  return 'Atualmente o nível do '+river.info.riverName+' está em '+measured+' metros.';
 }
