@@ -41,6 +41,30 @@ exports.receivedPostback = function(event) {
   }
 }
 
+function processText(senderID, message) {
+  sendQuickReply(senderID, "Olá, como posso ajudá-lo?");
+}
+
+function processQuickReply(recipientId, quickReply) {
+  sendTypingOn(recipientId);
+  var payload = quickReply.payload.split(";");
+  switch (payload[0]) {
+    case 'RIOACRE_PAYLOAD':
+      sendTextMessage(recipientId, "Rio Acre:");
+      break;
+    case 'RIOMADEIRA_PAYLOAD':
+      sendTextMessage(recipientId, "Rio Madeira");
+      break;
+    case 'HELP_PAYLOAD':
+      sendTextMessage(senderID, "HELP TEXT");
+      break;
+    default:
+      sendQuickReply(senderID, "Olá, como posso ajudá-lo?");
+      break;
+  }
+  sendTypingOff(recipientId);
+}
+
 function sendTextMessage(recipientId, messageText) {
   var
     messageData = {
