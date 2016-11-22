@@ -4,7 +4,7 @@ const
   request = require('request'),
   config = require('./../config/config');
 
-exports.getRiverData = function(station) {
+exports.getRiverData = function(station, successCallback) {
   request({
       url: config.api + 'station/'+station+'/prediction',
       json: true
@@ -12,7 +12,7 @@ exports.getRiverData = function(station) {
       if (error || response.statusCode !== 200) {
         return;
       }
-      callback(body);
+      successCallback(body);
       return;
   });
 }
