@@ -9,8 +9,8 @@ var app = express();
 app.use(logger('short'));
 app.use(bodyParser.json());
 
-var config = require('./server/config/config');
-require('./server/config/routes')(app,config);
+var config = require('./src/config/config');
+require('./src/config/routes')(app,config);
 
 app.listen(config.port, function() {
   console.log('Listening on port ' + config.port);
