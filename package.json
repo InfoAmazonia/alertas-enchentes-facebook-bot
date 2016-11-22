@@ -1,0 +1,26 @@
+{
+  "name": "alertas-enchentes-facebook-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffersonrpn/alertas-enchentes-facebook-bot"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffersonrpn/alertas-enchentes-facebook-bot/issues"
+  },
+  "homepage": "https://github.com/jeffersonrpn/alertas-enchentes-facebook-bot#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
+    "request": "^2.78.0"
+  }
+}
