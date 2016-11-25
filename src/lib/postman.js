@@ -166,9 +166,8 @@ function callSendAPI(messageData) {
 
 function getRiverText(river) {
   var measured = Math.round((river.data[0].measured * 0.001) * 100) / 100;
-  var str = 'Atualmente o nível do '+river.info.riverName+', em '+river.info.name+' está em '+measured+' metros.';
-  var alertMessage = getAlertTimestamp(river);
-  str += alertMessage.title+' '+alertMessage.description;
+  var str = 'Atualmente o nível do '+river.info.riverName+', em '+river.info.name+' está em '+measured+' metros. ';
+  str += getAlertTimestamp(river);
   return str;
 }
 
@@ -177,26 +176,14 @@ function getAlertTimestamp(river) {
     // Checks flood threshold
     for (var i = 0; i < river.data.length; i++) {
       if (river.data[i].predicted >= river.info.floodThreshold) {
-        return {
-          title: ':warning:',
-          description: 'A previsão é que o nível chegue em estado de cheia aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.',
-          timestamp: river.data[i].id.timestamp
-        };
+        return 'A previsão é que o nível chegue em estado de cheia aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.';
       };
     }
     // Checks warning threshold
     for (var i = 0; i < river.data.length; i++) {
       if (river.data[i].predicted >= river.info.warningThreshold) {
-        return {
-          title: ':warning:',
-          description: 'A previsão é que o nível chegue em estado de alerta aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.',
-          timestamp: river.data[i].id.timestamp
-        };
+        return 'A previsão é que o nível chegue em estado de alerta aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.';
       };
     }
-    return {
-      title: ':white_check_mark:',
-      description: 'A previsão é que o nível mantenha seu estado atual pelas próximas horas.',
-      timestamp: null
-    };
+    return 'A previsão é que o nível mantenha seu estado atual pelas próximas horas.';
   }
