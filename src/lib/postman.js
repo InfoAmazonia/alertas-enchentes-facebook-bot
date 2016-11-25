@@ -52,15 +52,19 @@ function processQuickReply(recipientId, quickReply) {
   switch (payload[0]) {
     case 'RIOACRE_PAYLOAD':
       resource.getRiverData('13600002', function(river) {
+        sendTypingOff(recipientId);
         sendTextMessage(recipientId, getRiverText(river));
       }, function(errorMessage) {
+        sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
       });
       break;
     case 'RIOMADEIRA_PAYLOAD':
       resource.getRiverData('15400000', function(river) {
+        sendTypingOff(recipientId);
         sendTextMessage(recipientId, getRiverText(river));
       }, function(errorMessage) {
+        sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
       });
       break;
@@ -71,7 +75,6 @@ function processQuickReply(recipientId, quickReply) {
       sendQuickReply(recipientId, "Olá, como posso ajudá-lo?");
       break;
   }
-  sendTypingOff(recipientId);
 }
 
 function sendTextMessage(recipientId, messageText) {
@@ -162,6 +165,6 @@ function callSendAPI(messageData) {
 }
 
 function getRiverText(river) {
-  var measured = river.data[0].measured;
+  var measured = Math.round((river.data[0].measured * 0.001) * 100) / 100;
   return 'Atualmente o nível do '+river.info.riverName+' está em '+measured+' metros.';
 }
