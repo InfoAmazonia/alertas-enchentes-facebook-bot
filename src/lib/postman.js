@@ -99,12 +99,12 @@ function sendQuickReply(recipientId, messageText) {
       quick_replies: [
         {
           "content_type": "text",
-          "title": "Rio Acre",
+          "title": "Rio Acre agora",
           "payload": "RIOACRE_PAYLOAD"
         },
         {
           "content_type": "text",
-          "title": "Rio Madeira",
+          "title": "Rio Madeira agora",
           "payload":"RIOMADEIRA_PAYLOAD"
         },
         {
