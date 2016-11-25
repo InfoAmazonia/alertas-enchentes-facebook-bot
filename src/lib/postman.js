@@ -167,7 +167,7 @@ function callSendAPI(messageData) {
 function getRiverText(river) {
   var measured = Math.round((river.data[0].measured * 0.001) * 100) / 100;
   var str = 'Atualmente o nível do '+river.info.riverName+', em '+river.info.name+' está em '+measured+' metros.';
-  var alertMessage += getAlertTimestamp(river);
+  var alertMessage = getAlertTimestamp(river);
   str += alertMessage.title+' '+alertMessage.description;
   return str;
 }
