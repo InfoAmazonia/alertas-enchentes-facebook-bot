@@ -52,11 +52,13 @@ function processQuickReply(recipientId, quickReply) {
   switch (payload[0]) {
     case 'RIOACRE_PAYLOAD':
       resource.getRiverData('13600002', function(river) {
+        console.log("Loaded "+river.info.riverName);
         sendTextMessage(recipientId, getRiverText(river));
       });
       break;
     case 'RIOMADEIRA_PAYLOAD':
       resource.getRiverData('15400000', function(river) {
+        console.log("Loaded "+river.info.riverName);
         sendTextMessage(recipientId, getRiverText(river));
       });
       break;

@@ -5,6 +5,7 @@ const
   config = require('./../config/config');
 
 exports.getRiverData = function(station, successCallback) {
+  console.log("Loading "+station);
   request({
       url: config.api + 'station/'+station+'/prediction',
       json: true
