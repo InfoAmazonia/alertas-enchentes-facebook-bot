@@ -167,7 +167,8 @@ function callSendAPI(messageData) {
 function getRiverText(river) {
   var measured = Math.round((river.data[0].measured * 0.001) * 100) / 100;
   var str = 'Atualmente o nível do '+river.info.riverName+', em '+river.info.name+' está em '+measured+' metros.';
-  str += getAlertTimestamp(river);
+  var alertMessage += getAlertTimestamp(river);
+  str += alertMessage.title+' '+alertMessage.description;
   return str;
 }
 
@@ -179,7 +180,7 @@ function getAlertTimestamp(river) {
         return {
           title: ':warning:',
           description: 'A previsão é que o nível chegue em estado de cheia aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.',
-          timestamp: data[i].id.timestamp
+          timestamp: river.data[i].id.timestamp
         };
       };
     }
@@ -189,7 +190,7 @@ function getAlertTimestamp(river) {
         return {
           title: ':warning:',
           description: 'A previsão é que o nível chegue em estado de alerta aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.',
-          timestamp: data[i].id.timestamp
+          timestamp: river.data[i].id.timestamp
         };
       };
     }
