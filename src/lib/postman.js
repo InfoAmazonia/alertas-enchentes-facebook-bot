@@ -31,43 +31,50 @@ exports.receivedPostback = function(event) {
 
   switch (payload) {
     case 'GET_STARTED_PAYLOAD':
-      sendQuickReply(senderID, "Olá, como posso ajudá-lo?");
+      sendQuickReply(senderID, 'Olá, como posso ajudá-lo?');
       break;
     case 'HELP_PAYLOAD':
-      sendTextMessage(senderID, "HELP TEXT");
+      sendTextMessage(senderID, 'HELP TEXT');
       break;
     default:
-      sendQuickReply(senderID, "Olá, como posso ajudá-lo?");
+      sendQuickReply(senderID, 'Olá, como posso ajudá-lo?');
       break;
   }
 }
 
 function processText(senderID, message) {
-  sendQuickReply(senderID, "Olá, como posso ajudá-lo?");
+  sendQuickReply(senderID, 'Olá, como posso ajudá-lo?');
 }
 
 function processQuickReply(recipientId, quickReply) {
   sendTypingOn(recipientId);
-  var payload = quickReply.payload.split(";");
+  var payload = quickReply.payload.split(';');
   switch (payload[0]) {
     case 'RIOACRE_PAYLOAD':
       resource.getRiverData('13600002', function(river) {
+        sendTypingOff(recipientId);
         sendTextMessage(recipientId, getRiverText(river));
+      }, function(errorMessage) {
+        sendTypingOff(recipientId);
+        sendTextMessage(recipientId, errorMessage);
       });
       break;
     case 'RIOMADEIRA_PAYLOAD':
       resource.getRiverData('15400000', function(river) {
+        sendTypingOff(recipientId);
         sendTextMessage(recipientId, getRiverText(river));
+      }, function(errorMessage) {
+        sendTypingOff(recipientId);
+        sendTextMessage(recipientId, errorMessage);
       });
       break;
     case 'HELP_PAYLOAD':
-      sendTextMessage(recipientId, "HELP TEXT");
+      sendTextMessage(recipientId, 'HELP TEXT');
       break;
     default:
-      sendQuickReply(recipientId, "Olá, como posso ajudá-lo?");
+      sendQuickReply(recipientId, 'Olá, como posso ajudá-lo?');
       break;
   }
-  sendTypingOff(recipientId);
 }
 
 function sendTextMessage(recipientId, messageText) {
@@ -78,7 +85,7 @@ function sendTextMessage(recipientId, messageText) {
       },
       message: {
         text: messageText,
-        metadata: "DEVELOPER_DEFINED_METADATA"
+        metadata: 'DEVELOPER_DEFINED_METADATA'
       }
     };
 
@@ -94,19 +101,19 @@ function sendQuickReply(recipientId, messageText) {
       text: messageText,
       quick_replies: [
         {
-          "content_type": "text",
-          "title": "Rio Acre",
-          "payload": "RIOACRE_PAYLOAD"
+          'content_type': 'text',
+          'title': 'Rio Acre agora',
+          'payload': 'RIOACRE_PAYLOAD'
         },
         {
-          "content_type": "text",
-          "title": "Rio Madeira",
-          "payload":"RIOMADEIRA_PAYLOAD"
+          'content_type': 'text',
+          'title': 'Rio Madeira agora',
+          'payload':'RIOMADEIRA_PAYLOAD'
         },
         {
-          "content_type": "text",
-          "title": "Ajuda",
-          "payload": "HELP_PAYLOAD"
+          'content_type': 'text',
+          'title': 'Ajuda',
+          'payload': 'HELP_PAYLOAD'
         }
       ]
     }
@@ -120,7 +127,7 @@ function sendTypingOn(recipientId) {
     recipient: {
       id: recipientId
     },
-    sender_action: "typing_on"
+    sender_action: 'typing_on'
   };
   callSendAPI(messageData);
 }
@@ -130,7 +137,7 @@ function sendTypingOff(recipientId) {
     recipient: {
       id: recipientId
     },
-    sender_action: "typing_off"
+    sender_action: 'typing_off'
   };
   callSendAPI(messageData);
 }
@@ -147,17 +154,36 @@ function callSendAPI(messageData) {
       var messageId = body.message_id;
 
       if (messageId) {
-        console.log("Successfully sent message with id %s to recipient %s", messageId, recipientId);
+        console.log('Successfully sent message with id %s to recipient %s', messageId, recipientId);
       } else {
-      console.log("Successfully called Send API for recipient %s", recipientId);
+      console.log('Successfully called Send API for recipient %s', recipientId);
       }
     } else {
-      console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+      console.error('Failed calling Send API', response.statusCode, response.statusMessage, body.error);
     }
   });
 }
 
 function getRiverText(river) {
-  var measured = river.data[0].measured;
-  return 'Atualmente o nível do '+river.info.riverName+' está em '+measured+' metros.';
+  var measured = Math.round((river.data[0].measured * 0.001) * 100) / 100;
+  var str = 'Atualmente o nível do '+river.info.riverName+', em '+river.info.name+' está em '+measured+' metros. ';
+  str += getAlertTimestamp(river);
+  return str;
 }
+
+function getAlertTimestamp(river) {
+    if (!river) return '';
+    // Checks flood threshold
+    for (var i = 0; i < river.data.length; i++) {
+      if (river.data[i].predicted >= river.info.floodThreshold) {
+        return 'A previsão é que o nível chegue em estado de cheia aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.';
+      };
+    }
+    // Checks warning threshold
+    for (var i = 0; i < river.data.length; i++) {
+      if (river.data[i].predicted >= river.info.warningThreshold) {
+        return 'A previsão é que o nível chegue em estado de alerta aos '+river.data[i].predicted+' metros em '+river.data[i].timestamp+' horas.';
+      };
+    }
+    return 'A previsão é que o nível mantenha seu estado atual pelas próximas horas.';
+  }
