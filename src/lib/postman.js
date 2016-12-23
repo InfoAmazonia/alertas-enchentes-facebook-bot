@@ -283,7 +283,7 @@ schedule.scheduleJob('* * * * *', function() {
             console.log(error);
             return;
           }
-          console.log(timetable);
+          console.log(timetable.station);
           if (timetable.timestamp !== alert.timestamp) {
             Alert.find({station: doc._id}, function(error, alerts) {
               if (error) {
