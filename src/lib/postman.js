@@ -275,8 +275,8 @@ schedule.scheduleJob('* * * * *', function() {
   var cursor = Alert.aggregate([ { $group: { _id: "$station" }} ]).cursor({ batchSize: 1000 }).exec();
   cursor.each(function(error, doc) {
     if (doc) {
-      console.log("GET "+ doc._id);
       resource.getAlert(doc._id, function(alert) {
+        console.log("GET "+ doc._id);
         // Check if a new alert was posted
         Timetable.find({station: doc._id}, function(error, timetable) {
           if (error) {
@@ -294,8 +294,7 @@ schedule.scheduleJob('* * * * *', function() {
                 {
                   timestamp: alert.timestamp,
                   station: doc._id
-                },
-                {upsert:true}, function(error) {
+                }, function(error) {
                   if (error) {
                     console.log(error);
                     return;
