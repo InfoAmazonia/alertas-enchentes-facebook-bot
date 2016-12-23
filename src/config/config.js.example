@@ -1,6 +1,7 @@
 module.exports = {
   port: process.env.PORT || 5002,
   api: 'http://localhost:5003/api/',
+  db: 'mongodb://localhost/alertas-enchentes-facebook-bot',
   fb : {
     validation_token : 'facebook-validation-token',
     access_token : 'FACEBOOK-ACCESS-TOKEN'

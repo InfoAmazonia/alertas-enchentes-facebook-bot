@@ -3,6 +3,7 @@
 var
   request = require('request'),
   config = require('./../config/config'),
+  Alert = require('./../models/alert'),
   resource = require('./resource');
 
 exports.receivedMessage = function(event) {
@@ -53,7 +54,7 @@ function processQuickReply(recipientId, quickReply) {
     case 'RIOACRE_PAYLOAD':
       resource.getRiverData('13600002', function(river) {
         sendTypingOff(recipientId);
-        sendTextMessage(recipientId, getRiverText(river));
+        sendRiverMessage(recipientId, river);
       }, function(errorMessage) {
         sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
@@ -67,6 +68,12 @@ function processQuickReply(recipientId, quickReply) {
         sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
       });
+      break;
+    case 'REGISTER_PAYLOAD':
+      registerUser(recipientId, payload[1]);
+      break;
+    case 'NOT_REGISTER_PAYLOAD':
+      sendTextMessage(recipientId, ';)');
       break;
     case 'HELP_PAYLOAD':
       sendTextMessage(recipientId, 'HELP TEXT');
@@ -161,6 +168,59 @@ function callSendAPI(messageData) {
     } else {
       console.error('Failed calling Send API', response.statusCode, response.statusMessage, body.error);
     }
+  });
+}
+
+function sendRiverMessage(recipientId, river) {
+  alert.find({ user: recipientId }, function(error, alerts) {
+    if (error) {
+      console.error(error);
+      sendTextMessage(recipientId, "Estou indiponível no momento");
+      return;
+    }
+    console.log(alerts);
+    if (alerts.length) {
+      sendTextMessage(recipientId, getRiverText(river));
+      return;
+    }
+    var messageData = {
+      recipient: {
+        id: recipientId
+      },
+      message: {
+        text: getRiverText(river),
+        quick_replies: [
+          {
+            'content_type': 'text',
+            'title': 'Receber alertas para '+river.info.name,
+            'payload': 'REGISTER_PAYLOAD'+ ';' + river.info.id
+          },
+          {
+            'content_type': 'text',
+            'title': 'Obrigado',
+            'payload': 'NOT_REGISTER_PAYLOAD'
+          }
+        ]
+      }
+    };
+
+    callSendAPI(messageData);
+    return;
+  });
+}
+
+function registerUser(recipientId, riverId) {
+  var alert = new Alert({
+    user: recipientId,
+    station: riverId
+  });
+  alert.save(function(error) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    sendTextMessage(recipientId, "Você receberá alertas a partir de agora.");
+    return;
   });
 }
 
