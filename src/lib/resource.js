@@ -21,3 +21,17 @@ exports.getRiverData = function(station, successCallback, errorCallback) {
       return;
   });
 }
+
+exports.getAlert = function(station, successCallback, errorCallback) {
+  request({
+      url: config.api + 'station/'+station+'/alert',
+      json: true
+  }, function (error, response, body) {
+      if (error || response.statusCode !== 200) {
+        errorCallback("Não foi possível obter dados desse rio.");
+        return;
+      }
+      successCallback(body);
+      return;
+  });
+}

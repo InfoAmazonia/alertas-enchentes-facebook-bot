@@ -2,6 +2,7 @@
 
 var
   request = require('request'),
+  schedule = require('node-schedule'),
   config = require('./../config/config'),
   Alert = require('./../models/alert'),
   resource = require('./resource');
@@ -247,3 +248,35 @@ function getAlertTimestamp(river) {
     }
     return 'A previsão é que o nível mantenha seu estado atual pelas próximas horas.';
   }
+
+function sendAlertToAll(recipients, alert) {
+  for (var i = 0; i < recipients.length; i++) {
+    sendTextMessage(recipients[i].user, alert.message);
+  }
+}
+
+// Execute a cron job every 1 minute
+var masterAlertTimestamp = 0;
+schedule.scheduleJob('* * * * *', function() {
+  var cursor = Alert.aggregate([ { $group: { _id: "$station" }} ]).cursor({ batchSize: 1000 }).exec();
+  cursor.each(function(error, doc) {
+    if (doc) {
+      resource.getAlert(doc._id, function(alert) {
+        // Check if a new alert was posted
+        if (masterAlertTimestamp !== alert.timestamp) {
+          console.log("Timestamp changed!");
+          Alert.find({station: doc._id}, function(error, alerts) {
+            if (error) {
+              console.error(error);
+              return;
+            }
+            masterAlertTimestamp = alert.timestamp;
+            sendAlertToAll(alerts, alert);
+          });
+        }
+      }, function(error) {
+        console.log(error);
+      });
+    }
+  });
+});
