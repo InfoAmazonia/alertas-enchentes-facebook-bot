@@ -183,7 +183,6 @@ function sendRiverMessage(recipientId, river) {
       sendTextMessage(recipientId, "Estou indiponível no momento");
       return;
     }
-    console.log(alerts);
     if (alerts.length) {
       sendTextMessage(recipientId, getRiverText(river));
       return;
@@ -283,6 +282,9 @@ schedule.scheduleJob('* * * * *', function() {
             console.log(error);
             return;
           }
+          console.log("== Timetable ==");
+          console.log(timetable);
+          console.log("====");
           if (timetable && timetable.timestamp !== alert.timestamp) {
             Alert.find({station: doc._id}, function(error, alerts) {
               if (error) {
