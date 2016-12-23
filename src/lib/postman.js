@@ -172,7 +172,7 @@ function callSendAPI(messageData) {
 }
 
 function sendRiverMessage(recipientId, river) {
-  alert.find({ user: recipientId }, function(error, alerts) {
+  Alert.find({ user: recipientId }, function(error, alerts) {
     if (error) {
       console.error(error);
       sendTextMessage(recipientId, "Estou indiponível no momento");
