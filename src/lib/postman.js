@@ -38,6 +38,9 @@ exports.receivedPostback = function(event) {
     case 'HELP_PAYLOAD':
       sendTextMessage(senderID, 'HELP TEXT');
       break;
+    case 'UNREGISTER_PAYLOAD':
+      sendTextMessage(senderID, 'HELP TEXT');
+      break;
     default:
       sendQuickReply(senderID, 'Olá, como posso ajudá-lo?');
       break;
@@ -64,7 +67,7 @@ function processQuickReply(recipientId, quickReply) {
     case 'RIOMADEIRA_PAYLOAD':
       resource.getRiverData('15400000', function(river) {
         sendTypingOff(recipientId);
-        sendTextMessage(recipientId, getRiverText(river));
+        sendRiverMessage(recipientId, river);
       }, function(errorMessage) {
         sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
@@ -193,7 +196,7 @@ function sendRiverMessage(recipientId, river) {
         quick_replies: [
           {
             'content_type': 'text',
-            'title': 'Receber alertas para '+river.info.name,
+            'title': 'Receber alertas',
             'payload': 'REGISTER_PAYLOAD'+ ';' + river.info.id
           },
           {
@@ -221,6 +224,17 @@ function registerUser(recipientId, riverId) {
       return;
     }
     sendTextMessage(recipientId, "Você receberá alertas a partir de agora.");
+    return;
+  });
+}
+
+function unregisterUser(recipientId) {
+  Alert.remove({user: recipientId}, function(error) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    sendTextMessage(recipientId, "Nenhum alerta será enviado à você. Para voltar a receber, basta solicitar novamente.");
     return;
   });
 }
@@ -264,7 +278,7 @@ schedule.scheduleJob('* * * * *', function() {
       resource.getAlert(doc._id, function(alert) {
         // Check if a new alert was posted
         if (masterAlertTimestamp !== alert.timestamp) {
-          console.log("Timestamp changed!");
+          console.log("Timestamp changed [old "+masterAlertTimestamp+"] [new "+alert.timestamp+"]");
           Alert.find({station: doc._id}, function(error, alerts) {
             if (error) {
               console.error(error);
