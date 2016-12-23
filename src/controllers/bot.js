@@ -21,8 +21,10 @@ exports.process = function(req, res) {
     data.entry.forEach(function(pageEntry) {
       pageEntry.messaging.forEach(function(messagingEvent) {
         if (messagingEvent.message) {
+          console.log("Message received");
           postman.receivedMessage(messagingEvent);
         } else if (messagingEvent.postback) {
+          console.log("Postback received");
           postman.receivedPostback(messagingEvent);
         } else {
           console.log("Webhook received unknown messagingEvent");
