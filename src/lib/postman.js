@@ -5,6 +5,7 @@ var
   schedule = require('node-schedule'),
   config = require('./../config/config'),
   Alert = require('./../models/alert'),
+  Timetable = require('./../models/timetable'),
   resource = require('./resource');
 
 exports.receivedMessage = function(event) {
@@ -176,7 +177,7 @@ function callSendAPI(messageData) {
 }
 
 function sendRiverMessage(recipientId, river) {
-  Alert.find({ user: recipientId }, function(error, alerts) {
+  Alert.find({ user: recipientId, station: river.info.id }, function(error, alerts) {
     if (error) {
       console.error(error);
       sendTextMessage(recipientId, "Estou indiponível no momento");
@@ -270,27 +271,47 @@ function sendAlertToAll(recipients, alert) {
 }
 
 // Execute a cron job every 1 minute
-var masterAlertTimestamp = 0;
 schedule.scheduleJob('* * * * *', function() {
   var cursor = Alert.aggregate([ { $group: { _id: "$station" }} ]).cursor({ batchSize: 1000 }).exec();
   cursor.each(function(error, doc) {
     if (doc) {
+      console.log("GET "+ doc._id);
       resource.getAlert(doc._id, function(alert) {
-        // Check if a new alert was posted
-        if (masterAlertTimestamp !== alert.timestamp) {
-          console.log("Timestamp changed [old "+masterAlertTimestamp+"] [new "+alert.timestamp+"]");
-          Alert.find({station: doc._id}, function(error, alerts) {
-            if (error) {
-              console.error(error);
-              return;
-            }
-            masterAlertTimestamp = alert.timestamp;
-            sendAlertToAll(alerts, alert);
-          });
-        }
+        Timetable.find({station: doc._id}, function(error, timetable) {
+          // Check if a new alert was posted
+          if (error) {
+            console.log(error);
+            return;
+          }
+          console.log(timetable);
+          if (timetable.timestamp !== alert.timestamp) {
+            Alert.find({station: doc._id}, function(error, alerts) {
+              if (error) {
+                console.log(error);
+                return;
+              }
+              Timetable.findOneAndUpdate(
+                { station: doc._id},
+                {
+                  timestamp: alert.timestamp,
+                  station: doc._id
+                },
+                {upsert:true}, function(error) {
+                  if (error) {
+                    console.log(error);
+                    return;
+                  }
+                  console.log("Timestamp changed [old "+timetable.timestamp+"] [new "+alert.timestamp+"]");
+                  sendAlertToAll(alerts, alert);
+                });
+            });
+          }
+
+        });
       }, function(error) {
         console.log(error);
       });
     }
   });
+
 });
