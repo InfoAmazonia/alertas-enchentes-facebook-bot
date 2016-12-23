@@ -277,14 +277,13 @@ schedule.scheduleJob('* * * * *', function() {
     if (doc) {
       console.log("GET "+ doc._id);
       resource.getAlert(doc._id, function(alert) {
+        // Check if a new alert was posted
         Timetable.find({station: doc._id}, function(error, timetable) {
-          // Check if a new alert was posted
           if (error) {
             console.log(error);
             return;
           }
-          console.log(timetable.station);
-          if (timetable.timestamp !== alert.timestamp) {
+          if (timetable && timetable.timestamp !== alert.timestamp) {
             Alert.find({station: doc._id}, function(error, alerts) {
               if (error) {
                 console.log(error);
