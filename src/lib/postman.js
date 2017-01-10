@@ -197,7 +197,7 @@ function sendRiverMessage(recipientId, station, status) {
           {
             'content_type': 'text',
             'title': 'Receber alertas',
-            'payload': 'REGISTER_PAYLOAD'+ ';' + river.info.id
+            'payload': 'REGISTER_PAYLOAD'+ ';' + station
           },
           {
             'content_type': 'text',
