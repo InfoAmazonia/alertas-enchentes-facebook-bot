@@ -4,20 +4,16 @@ var
   request = require('request'),
   config = require('./../config/config');
 
-exports.getRiverData = function(station, successCallback, errorCallback) {
+exports.getRiverStatus = function(station, successCallback, errorCallback) {
   request({
-      url: config.api + 'station/'+station+'/prediction',
+      url: config.api + 'station/'+station+'/now',
       json: true
   }, function (error, response, body) {
       if (error || response.statusCode !== 200) {
-        errorCallback("Não foi possível obter dados desse rio.");
+        errorCallback("Não foi possível obter status desse rio.");
         return;
       }
-      if (body.data.length) {
-        successCallback(body);
-      } else {
-        errorCallback("Sem informações disponíveis no momento");
-      }
+      successCallback(body);
       return;
   });
 }

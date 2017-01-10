@@ -57,18 +57,18 @@ function processQuickReply(recipientId, quickReply) {
   var payload = quickReply.payload.split(';');
   switch (payload[0]) {
     case 'RIOACRE_PAYLOAD':
-      resource.getRiverData('13600002', function(river) {
+      resource.getRiverStatus('13600002', function(status) {
         sendTypingOff(recipientId);
-        sendRiverMessage(recipientId, river);
+        sendRiverMessage(recipientId, '13600002', status);
       }, function(errorMessage) {
         sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
       });
       break;
     case 'RIOMADEIRA_PAYLOAD':
-      resource.getRiverData('15400000', function(river) {
+      resource.getRiverStatus('15400000', function(status) {
         sendTypingOff(recipientId);
-        sendRiverMessage(recipientId, river);
+        sendRiverMessage(recipientId, '15400000', status);
       }, function(errorMessage) {
         sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
@@ -176,15 +176,15 @@ function callSendAPI(messageData) {
   });
 }
 
-function sendRiverMessage(recipientId, river) {
-  Alert.find({ user: recipientId, station: river.info.id }, function(error, alerts) {
+function sendRiverMessage(recipientId, station, status) {
+  Alert.find({ user: recipientId, station: station }, function(error, alerts) {
     if (error) {
       console.error(error);
       sendTextMessage(recipientId, "Estou indiponível no momento");
       return;
     }
     if (alerts.length) {
-      sendTextMessage(recipientId, getRiverText(river));
+      sendTextMessage(recipientId, status.message);
       return;
     }
     var messageData = {
@@ -192,7 +192,7 @@ function sendRiverMessage(recipientId, river) {
         id: recipientId
       },
       message: {
-        text: getRiverText(river),
+        text: status.message,
         quick_replies: [
           {
             'content_type': 'text',
