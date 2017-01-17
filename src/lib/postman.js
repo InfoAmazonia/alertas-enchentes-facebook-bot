@@ -40,7 +40,7 @@ exports.receivedPostback = function(event) {
       sendTextMessage(senderID, 'HELP TEXT');
       break;
     case 'UNREGISTER_PAYLOAD':
-      sendTextMessage(senderID, 'HELP TEXT');
+      unregisterUser(senderID);
       break;
     default:
       sendQuickReply(senderID, 'Olá, como posso ajudá-lo?');
