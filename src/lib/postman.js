@@ -114,12 +114,12 @@ function sendQuickReply(recipientId, messageText) {
       quick_replies: [
         {
           'content_type': 'text',
-          'title': 'Rio Acre agora',
+          'title': 'Rio Branco agora',
           'payload': 'RIOACRE_PAYLOAD'
         },
         {
           'content_type': 'text',
-          'title': 'Rio Madeira agora',
+          'title': 'Porto Velho agora',
           'payload':'RIOMADEIRA_PAYLOAD'
         },
         {
@@ -298,7 +298,6 @@ schedule.scheduleJob('* * * * *', function() {
                     console.log(error);
                     return;
                   }
-                  console.log("Timestamp changed [old "+timetable.timestamp+"] [new "+alert.timestamp+"]");
                   sendAlertToAll(alerts, alert);
                 });
             });
