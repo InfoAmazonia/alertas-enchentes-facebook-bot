@@ -57,9 +57,9 @@ function processQuickReply(recipientId, quickReply) {
   var payload = quickReply.payload.split(';');
   switch (payload[0]) {
     case 'RIOACRE_PAYLOAD':
-      resource.getRiverStatus('13600002', function(status) {
+      resource.getRiverStatus('13600010', function(status) {
         sendTypingOff(recipientId);
-        sendRiverMessage(recipientId, '13600002', status);
+        sendRiverMessage(recipientId, '13600010', status);
       }, function(errorMessage) {
         sendTypingOff(recipientId);
         sendTextMessage(recipientId, errorMessage);
