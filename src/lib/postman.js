@@ -37,7 +37,7 @@ exports.receivedPostback = function(event) {
       sendQuickReply(senderID, 'Olá, como posso ajudá-lo?');
       break;
     case 'HELP_PAYLOAD':
-      sendTextMessage(senderID, 'HELP TEXT');
+      sendTextMessage(senderID, 'Comece enviando um “Olá” para mim! Depois disso, vou responder com as opções de locais disponíveis para consulta. Ao escolher um deles, um novo botão vai aparecer, no qual você pode optar por receber alertas sempre que houver uma mudança significativa na previsão desejada. Para saber mais, visite a página do projeto, em https://enchentes.infoamazonia.org/');
       break;
     case 'UNREGISTER_PAYLOAD':
       unregisterUser(senderID);
